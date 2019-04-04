@@ -1,4 +1,3 @@
-import fastJson from "fast-json-stringify";
 import {
   DocumentNode,
   ExecutionResult,
@@ -40,14 +39,11 @@ import {
   resolveFieldDef
 } from "./ast";
 import { GraphQLError as GraphqlJitError } from "./error";
-import { queryToJSONSchema } from "./json";
 import { createNullTrimmer, NullTrimmer } from "./non-null";
 import { createResolveInfoThunk } from "./resolve-info";
 import { compileVariableParsing } from "./variables";
 
 export interface CompilerOptions {
-  customJSONSerializer: boolean;
-
   // Disable builtin scalars and enum serialization
   // which is responsible for coercion,
   // only safe for use if the output is completely correct.
@@ -110,7 +106,6 @@ export interface CompiledQuery {
     context: any,
     variables: Maybe<{ [key: string]: GraphQLScalarSerializer<any> }>
   ) => Promise<ExecutionResult> | ExecutionResult;
-  stringify: (v: any) => string;
 }
 
 /**
@@ -136,7 +131,6 @@ export function compileQuery(
   try {
     const options = {
       disablingCapturingStackErrors: false,
-      customJSONSerializer: false,
       disableLeafSerialization: false,
       customSerializers: {},
       ...partialOptions
@@ -151,13 +145,6 @@ export function compileQuery(
       operationName
     );
 
-    let stringify: (v: any) => string;
-    if (options.customJSONSerializer) {
-      const jsonSchema = queryToJSONSchema(context);
-      stringify = fastJson(jsonSchema);
-    } else {
-      stringify = JSON.stringify;
-    }
     const getVariables = compileVariableParsing(
       schema,
       context.operation.variableDefinitions || []
@@ -173,7 +160,9 @@ export function compileQuery(
     const func = new Function(functionBody)();
     return {
       query: createBoundQuery(context, document, func, getVariables),
-      stringify
+      operationName:
+        operationName ||
+        (context.operation.name && context.operation.name.value)
     };
   } catch (err) {
     return {

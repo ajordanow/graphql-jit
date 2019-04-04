@@ -37,10 +37,10 @@
     },
     "coverageThreshold": {
       "global": {
-        "branches": 94,
-        "functions": 95,
-        "lines": 95,
-        "statements": 95
+        "branches": 96,
+        "functions": 98,
+        "lines": 97,
+        "statements": 97
       }
     }
   },
@@ -51,7 +51,6 @@
     "@types/benchmark": "^1.0.31",
     "@types/graphql": "^14.2.0",
     "@types/jest": "^24.0.11",
-    "@types/json-schema": "^7.0.1",
     "@types/lodash.memoize": "^4.1.6",
     "@types/lodash.merge": "^4.6.6",
     "@types/lodash.mergewith": "^4.6.6",
@@ -71,8 +70,6 @@
     "typescript": "^3.4.2"
   },
   "dependencies": {
-    "fast-json-stringify": "^1.13.0",
-    "json-schema": "^0.2.3",
     "lodash.memoize": "^4.1.2",
     "lodash.merge": "^4.6.1",
     "lodash.mergewith": "^4.6.1"
